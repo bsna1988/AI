@@ -1,4 +1,4 @@
-To run open-webui:
+# To run open-webui:
 `open-webui serve`
 Open
 http://localhost:8080/
@@ -15,3 +15,13 @@ To run github-mcp-server
 
 To run [mcp-attlasian|https://github.com/sooperset/mcp-atlassian]
 `uvx mcpo --port 8000 -- docker run -i --rm --env-file /Users/sasha/AI/env.properties ghcr.io/sooperset/mcp-atlassian:latest`
+
+# Download confluence
+- put confluence link and creds in .env file
+- `python download_confluence.py`
+
+# Elastic
+[Single node](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-elasticsearch-docker-basic)
+`docker network create elastic`
+`docker pull docker.elastic.co/elasticsearch/elasticsearch:9.0.0`
+`docker run --name es01 --net elastic -p 9200:9200 -it -m 6GB -e "xpack.ml.use_auto_machine_memory_percent=true" docker.elastic.co/elasticsearch/elasticsearch:9.0.0`

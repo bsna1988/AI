@@ -6,7 +6,11 @@
 .webui_secret_key
 
 ### Env ###
-env.properties
+.env
 
 ### MCP projects ###
 mcp-servers/
+
+### Python ###
+__pycache__/
+.venv/
