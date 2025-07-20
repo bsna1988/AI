@@ -9,10 +9,10 @@ load_dotenv()
 os.environ["HF_API_TOKEN"] = os.getenv('HF_API_TOKEN')
 
 from haystack.components.embedders import SentenceTransformersTextEmbedder
-from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
 from haystack.components.builders import ChatPromptBuilder
 from haystack.dataclasses import ChatMessage
-from haystack.components.generators.chat import HuggingFaceAPIChatGenerator
+from haystack_integrations.components.generators.ollama import OllamaChatGenerator
+
 
 template = [
     ChatMessage.from_user(
@@ -29,16 +29,17 @@ Answer:
 """
     )
 ]
+generator = OllamaChatGenerator(model="zephyr",
+                            url = "http://localhost:11434",
+                            generation_kwargs={
+                              "temperature": 0.9,
+                              })
+
 pipe = Pipeline()
 pipe.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
 pipe.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
 pipe.add_component("chat_prompt_builder", ChatPromptBuilder(template=template))
-pipe.add_component(
-    "llm",
-    HuggingFaceAPIChatGenerator(
-        api_type="serverless_inference_api", api_params={"model": "HuggingFaceH4/zephyr-7b-beta"}
-    ),
-)
+pipe.add_component("llm", generator)
 
 pipe.connect("embedder.embedding", "retriever.query_embedding")
 pipe.connect("retriever", "chat_prompt_builder.documents")

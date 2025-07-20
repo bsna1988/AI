@@ -18,10 +18,25 @@ To run [mcp-attlasian|https://github.com/sooperset/mcp-atlassian]
 
 # Download confluence
 - put confluence link and creds in .env file
+- API token page https://id.atlassian.com/manage-profile/security/api-tokens
 - `python download_confluence.py`
 
 # Elastic
-[Single node](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-elasticsearch-docker-basic)
-`docker network create elastic`
-`docker pull docker.elastic.co/elasticsearch/elasticsearch:9.0.0`
-`docker run --name es01 --net elastic -p 9200:9200 -it -m 6GB -e "xpack.ml.use_auto_machine_memory_percent=true" docker.elastic.co/elasticsearch/elasticsearch:9.0.0`
+`docker pull docker.elastic.co/elasticsearch/elasticsearch:8.10.4`
+`docker run -p 9200:9200 -e "discovery.type=single-node" -e "ES_JAVA_OPTS=-Xms1024m -Xmx1024m" -e "xpack.security.enabled=false" elasticsearch:8.18.4`
+
+
+# Olama
+`ollama pull zephyr:7b-alpha-q3_K_S`
+https://docs.haystack.deepset.ai/docs/ollamachatgenerator
+`pip install ollama-haystack`
+
+# Pipelined
+https://docs.openwebui.com/pipelines/
+```
+git clone https://github.com/open-webui/pipelines.git
+cd pipelines
+https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python/19711831#19711831
+pip install -r requirements.txt
+sh ./start.sh
+```

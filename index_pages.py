@@ -5,7 +5,6 @@ from haystack.components.routers import FileTypeRouter
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack import Pipeline
-from haystack.document_stores.in_memory import InMemoryDocumentStore
 from pathlib import Path
 from document_store_es import document_store
 
