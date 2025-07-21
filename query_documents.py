@@ -1,13 +1,7 @@
-import os
+
 from haystack import Pipeline
-from dotenv import load_dotenv
 from document_store_es import document_store
 from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever
-load_dotenv()
-
-# Get the base URL, space key, username, and API token from environment variables
-os.environ["HF_API_TOKEN"] = os.getenv('HF_API_TOKEN')
-
 from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.builders import ChatPromptBuilder
 from haystack.dataclasses import ChatMessage
@@ -51,4 +45,6 @@ question = (
     "How can I endorse my?"
 )
 
-pipe.run({"embedder": {"text": question}, "chat_prompt_builder": {"question": question}})
+result = pipe.run({"embedder": {"text": question}, "chat_prompt_builder": {"question": question}})
+
+print(result["llm"]["replies"][-1]._content[-1].text.strip())
