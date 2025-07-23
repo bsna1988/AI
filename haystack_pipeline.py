@@ -9,21 +9,20 @@ requirements: haystack-ai, datasets>=2.6.1, sentence-transformers>=2.2.0
 """
 
 from typing import List, Union, Generator, Iterator
-from haystack import Pipeline
-from document_store_es import document_store
 from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever
 from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.builders import ChatPromptBuilder
 from haystack.dataclasses import ChatMessage
 from haystack_integrations.components.generators.ollama import OllamaChatGenerator
-
+from haystack_integrations.document_stores.elasticsearch import ElasticsearchDocumentStore
 
 class Pipeline:
     def __init__(self):
-        self.pipe = None
+        self.pipeline = None
 
     async def on_startup(self):
-
+        document_store = ElasticsearchDocumentStore(hosts = "http://localhost:9200")
+        from haystack import Pipeline
         template = [
             ChatMessage.from_user(
                 """
@@ -47,15 +46,15 @@ class Pipeline:
                                     "temperature": 0.9,
                                     })
 
-        self.pipe = Pipeline()
-        self.pipe.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
-        self.pipe.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
-        self.pipe.add_component("chat_prompt_builder", ChatPromptBuilder(template=template))
-        self.pipe.add_component( "llm",generator)
+        self.pipeline = Pipeline()
+        self.pipeline.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
+        self.pipeline.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
+        self.pipeline.add_component("chat_prompt_builder", ChatPromptBuilder(template=template))
+        self.pipeline.add_component( "llm",generator)
 
-        self.pipe.connect("embedder.embedding", "retriever.query_embedding")
-        self.pipe.connect("retriever", "chat_prompt_builder.documents")
-        self.pipe.connect("chat_prompt_builder.prompt", "llm.messages")
+        self.pipeline.connect("embedder.embedding", "retriever.query_embedding")
+        self.pipeline.connect("retriever", "chat_prompt_builder.documents")
+        self.pipeline.connect("chat_prompt_builder.prompt", "llm.messages")
 
         pass
 
@@ -73,7 +72,7 @@ class Pipeline:
         print(user_message)
 
         question = user_message
-        response = self.pipe.run(
+        response = self.pipeline.run(
           {"embedder": {"text": question}, "chat_prompt_builder": {"question": question}}
         )
 

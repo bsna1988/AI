@@ -34,9 +34,5 @@ https://docs.haystack.deepset.ai/docs/ollamachatgenerator
 # Pipelined
 https://docs.openwebui.com/pipelines/
 ```
-git clone https://github.com/open-webui/pipelines.git
-cd pipelines
-https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python/19711831#19711831
-pip install -r requirements.txt
-sh ./start.sh
+ docker run -d -p 9099:9099 --add-host=host.docker.internal:host-gateway -e PIPELINES_URLS="https://github.com/bsna1988/AI/blob/main/confluence_pipeline/haystack_pipeline.py" -v pipelines:/app/pipelines --name pipelines --restart always ghcr.io/open-webui/pipelines:main
 ```
