@@ -46,6 +46,7 @@ class Pipeline:
                                     "temperature": 0.9,
                                     })
 
+        from haystack import Pipeline
         self.pipeline = Pipeline()
         self.pipeline.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
         self.pipeline.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
