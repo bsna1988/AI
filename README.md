@@ -1,4 +1,5 @@
 # To run open-webui:
+python < 3.10 (Better to run in docker)
 `open-webui serve`
 Open
 http://localhost:8080/
@@ -32,7 +33,8 @@ https://docs.haystack.deepset.ai/docs/ollamachatgenerator
 `pip install ollama-haystack`
 
 # Pipelined
-https://docs.openwebui.com/pipelines/
+python > 3.10
 ```
- docker run -d -p 9099:9099 --add-host=host.docker.internal:host-gateway -e PIPELINES_URLS="https://github.com/bsna1988/AI/blob/main/confluence_pipeline/haystack_pipeline.py" -v pipelines:/app/pipelines --name pipelines --restart always ghcr.io/open-webui/pipelines:main
+cd pipelines
+./start.sh
 ```

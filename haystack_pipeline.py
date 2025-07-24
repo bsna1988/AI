@@ -18,11 +18,10 @@ from haystack_integrations.document_stores.elasticsearch import ElasticsearchDoc
 
 class Pipeline:
     def __init__(self):
-        self.pipeline = None
+        self.rag_pipeline = None
 
     async def on_startup(self):
         document_store = ElasticsearchDocumentStore(hosts = "http://localhost:9200")
-        from haystack import Pipeline
         template = [
             ChatMessage.from_user(
                 """
@@ -47,15 +46,15 @@ class Pipeline:
                                     })
 
         from haystack import Pipeline
-        self.pipeline = Pipeline()
-        self.pipeline.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
-        self.pipeline.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
-        self.pipeline.add_component("chat_prompt_builder", ChatPromptBuilder(template=template))
-        self.pipeline.add_component( "llm",generator)
+        self.rag_pipeline = Pipeline()
+        self.rag_pipeline.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
+        self.rag_pipeline.add_component("retriever", ElasticsearchEmbeddingRetriever(document_store=document_store))
+        self.rag_pipeline.add_component("chat_prompt_builder", ChatPromptBuilder(template=template))
+        self.rag_pipeline.add_component( "llm",generator)
 
-        self.pipeline.connect("embedder.embedding", "retriever.query_embedding")
-        self.pipeline.connect("retriever", "chat_prompt_builder.documents")
-        self.pipeline.connect("chat_prompt_builder.prompt", "llm.messages")
+        self.rag_pipeline.connect("embedder.embedding", "retriever.query_embedding")
+        self.rag_pipeline.connect("retriever", "chat_prompt_builder.documents")
+        self.rag_pipeline.connect("chat_prompt_builder.prompt", "llm.messages")
 
         pass
 
@@ -73,7 +72,7 @@ class Pipeline:
         print(user_message)
 
         question = user_message
-        response = self.pipeline.run(
+        response = self.rag_pipeline.run(
           {"embedder": {"text": question}, "chat_prompt_builder": {"question": question}}
         )
 
